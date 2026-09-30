@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -13,6 +17,7 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    await this.ensureEmailIsFree(createUserDto.email);
     const user = this.userRepository.create(createUserDto);
     return await this.userRepository.save(user);
   }
@@ -31,12 +36,25 @@ export class UserService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
-    Object.assign(user, updateUserDto);
+    const changes = Object.fromEntries(
+      Object.entries(updateUserDto).filter(([, value]) => value !== undefined),
+    ) as UpdateUserDto;
+    if (changes.email && changes.email !== user.email) {
+      await this.ensureEmailIsFree(changes.email);
+    }
+    Object.assign(user, changes);
     return await this.userRepository.save(user);
   }
 
   async remove(id: number): Promise<void> {
     const user = await this.findOne(id);
     await this.userRepository.remove(user);
+  }
+
+  private async ensureEmailIsFree(email: string): Promise<void> {
+    const exists = await this.userRepository.exists({ where: { email } });
+    if (exists) {
+      throw new ConflictException(`User with email ${email} already exists`);
+    }
   }
 }
