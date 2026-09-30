@@ -13,6 +13,22 @@ microservice/
 
 ---
 
+## 🐳 Ma'lumotlar bazalarini ishga tushirish
+
+PostgreSQL va MongoDB'ni Docker orqali ishga tushirish:
+```bash
+docker compose up -d
+```
+
+Har bir backend papkasida `.env.example` bor — undan nusxa oling:
+```bash
+cp .env.example .env
+```
+
+Talablar: Node.js 20+ (22 LTS tavsiya etiladi), npm, Docker.
+
+---
+
 ## 🚀 Backend 1 - PostgreSQL
 
 **Texnologiyalar:** NestJS + TypeORM + PostgreSQL
@@ -31,13 +47,13 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=microservice_db
 DB_USER=postgres
-DB_PASSWORD=your_password
+DB_PASSWORD=postgres
 ```
 
 ### Ishga tushirish:
 ```bash
 npm run start        # Production
-npm run start:dev    # Development (nodemon bilan)
+npm run start:dev    # Development (watch rejimi)
 ```
 
 ### API Endpoints:
@@ -70,10 +86,11 @@ MONGODB_URI=mongodb://localhost:27017/microservice_db
 ### Ishga tushirish:
 ```bash
 npm run start        # Production
-npm run start:dev    # Development (nodemon bilan)
+npm run start:dev    # Development (watch rejimi)
 ```
 
 ### API Endpoints:
+- `GET /health` - Health check
 - `GET /users` - Barcha userlarni olish
 - `GET /users/:id` - User ID bo'yicha olish
 - `POST /users` - Yangi user yaratish
@@ -101,10 +118,11 @@ PORT=3003
 ### Ishga tushirish:
 ```bash
 npm run start        # Production
-npm run start:dev    # Development (nodemon bilan)
+npm run start:dev    # Development (watch rejimi)
 ```
 
 ### API Endpoints:
+- `GET /health` - Health check
 - `GET /users` - Barcha userlarni olish
 - `GET /users/:id` - User ID bo'yicha olish
 - `POST /users` - Yangi user yaratish
